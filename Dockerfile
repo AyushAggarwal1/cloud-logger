@@ -1,13 +1,13 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir \
-    boto3 \
-    azure-mgmt-monitor \
-    azure-identity \
-    google-cloud-logging \
-    oci
-
+# hadolint ignore=DL3008,DL3015,DL3009
+RUN apt-get update -y \
+    && apt-get install --no-install-recommends -y 
+    
 COPY . .
+
+RUN pip3 install -r requirements.txt --no-cache-dir
+
 ENTRYPOINT [ "/bin/bash" ]
