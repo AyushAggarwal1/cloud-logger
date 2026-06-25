@@ -71,10 +71,12 @@ def fetch(output_file="gcp_audit_events.json", config_file=None, days=1, hours=0
         time_key = str(event.get("timestamp", "unknown"))
 
         if proto:
-            # Audit log — same shape as AWS: principal -> methodName -> timestamp
+            # Audit log: resource_type -> principal -> methodName -> timestamp
+            resource_type = event.get("resource", {}).get("type", "unknown")
             principal = proto.get("authenticationInfo", {}).get("principalEmail", "unknown")
             method_name = proto.get("methodName", "unknown")
             (nested
+                .setdefault(resource_type, {})
                 .setdefault(principal, {})
                 .setdefault(method_name, {})
                 [time_key]
